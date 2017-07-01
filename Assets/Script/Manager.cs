@@ -113,8 +113,8 @@ public class Manager : MonoBehaviour
         tower_block_reference.GetComponent<SpriteRenderer>().sprite = bad_sprite;
         tower_block_reference.transform.position = new Vector3(1, spawn_position.position.y, 0);
         //cambio images botn
-        button_bad.sprite = image_words[index_imagenes];
-        index_imagenes++;
+        //button_bad.sprite = image_words[index_imagenes];
+        //index_imagenes++;
         music.mute = false;
         rec.SetActive(false);
         button_bad.transform.GetChild(0).gameObject.SetActive(false);
