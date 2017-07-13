@@ -34,7 +34,7 @@ public class Block : MonoBehaviour
                 StartCoroutine(waitforsec_effect());
             }
             enter = true;
-            FindObjectOfType<Manager>().impact.Play();
+            FindObjectOfType<Manager>().impact_sound.Play();
         }
     }
 
