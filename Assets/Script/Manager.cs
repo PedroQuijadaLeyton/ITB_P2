@@ -11,7 +11,7 @@ public class Manager : MonoBehaviour
     int number_block = 0;
     public Transform main_camera;
     public Transform spawn_position;
-    float factor_of_height = 1.3f;
+    float factor_of_height = 1.32f;
 
     public Sprite good_sprite;
     public Sprite medium_sprite;
@@ -46,9 +46,15 @@ public class Manager : MonoBehaviour
     public AudioSource impact_sound;
     public AudioSource hint_1_sound;
     public AudioSource hint_2_sound;
-    public AudioSource hint_3_sound;
     public AudioSource bad_sound;
     public AudioSource good_sound;
+    
+    public CanvasGroup game;
+    public GameObject menu_room;
+    public GameObject room;
+    public GameObject button_menu_room;
+
+    int n_block_rewards = 1;
 
     // Use this for initialization
     void Start ()
@@ -173,70 +179,13 @@ public class Manager : MonoBehaviour
             hint_2_sound.PlayDelayed(1);
             //button_medium.transform.GetChild(0).gameObject.SetActive(true);
         }
-        else
-        {
-            hint_3_sound.PlayDelayed(1);
-            //button_good.transform.GetChild(0).gameObject.SetActive(true);
-        }
     }
 
     public void stop_recording(int boton_id)
     {
         current_bottom_pressed = boton_id;
-
         rec_overlay.SetActive(false);
         analysing_overlay.SetActive(true);
-
-        if (current_bottom_pressed == 0)
-        {
-            //tower_block_reference = Instantiate(tower_block);
-            //change sprite
-            //tower_block_reference.GetComponent<SpriteRenderer>().sprite = bad_sprite;
-           // tower_block_reference.transform.position = new Vector3(1, spawn_position.position.y, 0);
-            //cambio images botn
-            //button_bad.sprite = image_words[index_imagenes];
-            //index_imagenes++;
-           
-            //button_bad.transform.GetChild(0).gameObject.SetActive(false);
-        }
-        //else if (current_bottom_pressed == 1)
-        //{
-        //    //number_block++;
-        //    //tower_block_reference = Instantiate(tower_block);
-        //    //set acore to spawn
-        //    //tower_block_reference.GetComponent<Block>().score = "80%";
-        //    //tower_block_reference.GetComponent<Block>().score_value = 100;
-        //    //change sprite
-        //    //tower_block_reference.GetComponent<SpriteRenderer>().sprite = medium_sprite;
-        //    //tower_block_reference.transform.position = new Vector3(-0.3f, spawn_position.position.y, 0);
-        //    //move_spawn_position();
-
-        //    //cambio images botn
-        //    //button_medium.sprite = image_words[index_imagenes];
-        //    //index_imagenes++;
-        //    button_medium.transform.GetChild(0).gameObject.SetActive(false);
-
-        //    //StartCoroutine(wait_to_move_camera());
-        //}
-        //else
-        //{
-        //    //number_block++;
-        //   // tower_block_reference = Instantiate(tower_block);
-        //    //set acore to spawn
-        //   // tower_block_reference.GetComponent<Block>().score = "100%";
-        //   // tower_block_reference.GetComponent<Block>().score_value = 200;
-        //    //change sprite
-        //   // tower_block_reference.GetComponent<SpriteRenderer>().sprite = good_sprite;
-        //   // tower_block_reference.transform.position = spawn_position.position;
-        //   // move_spawn_position();
-
-        //    //cambio images botn
-        //   /// button_good.sprite = image_words[index_imagenes];
-        //   // index_imagenes++;
-        //    button_good.transform.GetChild(0).gameObject.SetActive(false);
-
-        //    //StartCoroutine(wait_to_move_camera());
-        //}
         StartCoroutine(wait_for_analysing());
     }
 
@@ -262,15 +211,22 @@ public class Manager : MonoBehaviour
 
             release_button.SetActive(true);
             the_claw.SetActive(true);
-
-            //button_good.transform.GetChild(0).gameObject.SetActive(false);
-            //button_medium.transform.GetChild(0).gameObject.SetActive(false);
-            //button_bad.transform.GetChild(0).gameObject.SetActive(false);
-
-            index_imagenes++;
-            image_to_name.sprite = image_words[index_imagenes];
+            
+            if (n_block_rewards % 3 == 0)
+            {
+                pedazo_de_mierda.transform.GetChild(1).gameObject.SetActive(false);
+                pedazo_de_mierda.transform.GetChild(0).gameObject.SetActive(true);
+                button_menu_room.SetActive(true);
+            }
+            else
+            {
+                pedazo_de_mierda.transform.GetChild(0).gameObject.SetActive(false);
+                pedazo_de_mierda.transform.GetChild(1).gameObject.SetActive(true);
+            }
+            n_block_rewards++;
 
             pedazo_de_mierda.SetActive(true);
+
             StartCoroutine(wait_to_hide_pedazo());
             good_sound.Play();
 
@@ -299,11 +255,6 @@ public class Manager : MonoBehaviour
             //tower_block_reference.transform.position = new Vector3(-0.3f, spawn_position.localPosition.y, 0);
             tower_block_reference.transform.position = spawn_position.position;
             move_spawn_position();
-
-            //cambio images botn
-            //button_medium.sprite = image_words[index_imagenes];
-            //index_imagenes++;
-            //button_medium.transform.GetChild(0).gameObject.SetActive(false);
         }
         else
         {
@@ -316,13 +267,10 @@ public class Manager : MonoBehaviour
             tower_block_reference.GetComponent<SpriteRenderer>().sprite = good_sprite;
             tower_block_reference.transform.position = spawn_position.position;
             move_spawn_position();
-
-            //cambio images botn
-            //button_good.sprite = image_words[index_imagenes];
-            //button_good.transform.GetChild(0).gameObject.SetActive(false);
-
-            //StartCoroutine(wait_to_move_camera());
         }
+        
+        index_imagenes++;
+        image_to_name.sprite = image_words[index_imagenes];
 
         release_button.SetActive(false);
         the_claw_animator.SetBool("move", false);
@@ -343,6 +291,65 @@ public class Manager : MonoBehaviour
     {
         yield return new WaitForSeconds(3.0f);
         pedazo_de_mierda.SetActive(false);
+    }
+
+
+    #region FAKE_FOR_ROOM_IMAGES
+    public void button_room_down()
+    {
+        rec_overlay.SetActive(true);
+        music_sound.mute = true;
+        hint_1_sound.PlayDelayed(1);
+    }
+
+    public void button_room_up()
+    {
+        rec_overlay.SetActive(false);
+        analysing_overlay.SetActive(true);
+        StartCoroutine(wait_for_analysing_2());
+    }
+
+
+    IEnumerator wait_for_analysing_2()
+    {
+        yield return new WaitForSeconds(3.0f);
+        good_sound.Play();
+        music_sound.mute = false;
+        analysing_overlay.SetActive(false);
+    }
+    #endregion FAKE_FOR_ROOM_IMAGES
+
+    public void open_menu_room()
+    {
+        game.alpha = 0;
+        game.interactable = false;
+        game.blocksRaycasts = false;
+        the_claw.SetActive(false);
+        menu_room.SetActive(true);
+    }
+
+    public void close_menu_room()
+    {
+        game.alpha = 1;
+        game.interactable = true;
+        game.blocksRaycasts = true;
+        the_claw.SetActive(true);
+        menu_room.SetActive(false);
+    }
+
+    public void open_room()
+    {
+        menu_room.SetActive(false);
+        room.SetActive(true);
+    }
+
+    public void close_room()
+    {
+        room.SetActive(false);
+        game.alpha = 1;
+        game.interactable = true;
+        game.blocksRaycasts = true;
+        the_claw.SetActive(true);
     }
 
 }
