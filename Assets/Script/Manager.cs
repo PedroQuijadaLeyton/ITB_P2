@@ -41,6 +41,8 @@ public class Manager : MonoBehaviour
     public GameObject release_button;
 
     public GameObject pedazo_de_mierda;
+    public GameObject pedazo_room_menu;
+    public GameObject pedazo_room;
 
     public AudioSource music_sound;
     public AudioSource impact_sound;
@@ -55,6 +57,7 @@ public class Manager : MonoBehaviour
     public GameObject button_menu_room;
 
     int n_block_rewards = 1;
+    bool room_demo = false;
 
     // Use this for initialization
     void Start ()
@@ -212,16 +215,29 @@ public class Manager : MonoBehaviour
             release_button.SetActive(true);
             the_claw.SetActive(true);
             
-            if (n_block_rewards % 3 == 0)
+            if (n_block_rewards % 3 == 0) //NEW OBJECT
             {
-                pedazo_de_mierda.transform.GetChild(1).gameObject.SetActive(false);
                 pedazo_de_mierda.transform.GetChild(0).gameObject.SetActive(true);
+                pedazo_de_mierda.transform.GetChild(1).gameObject.SetActive(false);
+                pedazo_de_mierda.transform.GetChild(2).gameObject.SetActive(false);
+                pedazo_de_mierda.transform.GetChild(3).gameObject.SetActive(false);
+                button_menu_room.SetActive(true);
+            }
+            else if (n_block_rewards % 2 == 0 && !room_demo) //NEW FLOOR ONLY ONCE
+            {
+                pedazo_de_mierda.transform.GetChild(0).gameObject.SetActive(false);
+                pedazo_de_mierda.transform.GetChild(1).gameObject.SetActive(false);
+                pedazo_de_mierda.transform.GetChild(2).gameObject.SetActive(false);
+                pedazo_de_mierda.transform.GetChild(3).gameObject.SetActive(true);
+                room_demo = true;
                 button_menu_room.SetActive(true);
             }
             else
             {
                 pedazo_de_mierda.transform.GetChild(0).gameObject.SetActive(false);
                 pedazo_de_mierda.transform.GetChild(1).gameObject.SetActive(true);
+                pedazo_de_mierda.transform.GetChild(2).gameObject.SetActive(false);
+                pedazo_de_mierda.transform.GetChild(3).gameObject.SetActive(false);
             }
             n_block_rewards++;
 
@@ -234,6 +250,12 @@ public class Manager : MonoBehaviour
         }
         else
         {
+            pedazo_de_mierda.transform.GetChild(0).gameObject.SetActive(false);
+            pedazo_de_mierda.transform.GetChild(1).gameObject.SetActive(false);
+            pedazo_de_mierda.transform.GetChild(2).gameObject.SetActive(true);
+            pedazo_de_mierda.transform.GetChild(3).gameObject.SetActive(false);
+            pedazo_de_mierda.SetActive(true);
+            StartCoroutine(wait_to_hide_pedazo());
             bad_sound.Play();
         }
         
@@ -299,7 +321,6 @@ public class Manager : MonoBehaviour
     {
         rec_overlay.SetActive(true);
         music_sound.mute = true;
-        hint_1_sound.PlayDelayed(1);
     }
 
     public void button_room_up()
@@ -326,6 +347,7 @@ public class Manager : MonoBehaviour
         game.blocksRaycasts = false;
         the_claw.SetActive(false);
         menu_room.SetActive(true);
+        pop_pedazo_room_menu();
     }
 
     public void close_menu_room()
@@ -341,6 +363,7 @@ public class Manager : MonoBehaviour
     {
         menu_room.SetActive(false);
         room.SetActive(true);
+        pop_pedazo_room();
     }
 
     public void close_room()
@@ -350,6 +373,30 @@ public class Manager : MonoBehaviour
         game.interactable = true;
         game.blocksRaycasts = true;
         the_claw.SetActive(true);
+    }
+
+    public void pop_pedazo_room()
+    {
+        pedazo_room.SetActive(true);
+        StartCoroutine(wait_to_hide_pedazo_room());
+    }
+
+    public void pop_pedazo_room_menu()
+    {
+        pedazo_room_menu.SetActive(true);
+        StartCoroutine(wait_to_hide_pedazo_room_menu());
+    }
+
+    IEnumerator wait_to_hide_pedazo_room()
+    {
+        yield return new WaitForSeconds(3.0f);
+        pedazo_room.SetActive(false);
+    }
+
+    IEnumerator wait_to_hide_pedazo_room_menu()
+    {
+        yield return new WaitForSeconds(3.0f);
+        pedazo_room_menu.SetActive(false);
     }
 
 }
